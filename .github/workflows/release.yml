@@ -48,6 +48,7 @@ jobs:
         with:
           workspaces: src-tauri
           key: ${{ matrix.target }}
+          cache-on-failure: true
       - name: Check release versions
         run: node scripts/release-artifacts.mjs validate
       - run: npm ci
@@ -62,8 +63,15 @@ jobs:
         if: runner.os == 'macOS'
         shell: bash
         run: |
-          codesign --verify --deep --strict --verbose=2 "src-tauri/target/${{ matrix.target }}/release/bundle/macos/Forex Time.app"
-          hdiutil verify src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
+          # Tauri removes the temporary .app after a DMG-only build. Verify the
+          # actual app shipped inside the read-only disk image instead.
+          images=(src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg)
+          test "${#images[@]}" -eq 1
+          hdiutil verify "${images[0]}"
+          mount_dir="$(mktemp -d)"
+          trap 'hdiutil detach "$mount_dir" >/dev/null 2>&1 || true; rmdir "$mount_dir"' EXIT
+          hdiutil attach -readonly -nobrowse -mountpoint "$mount_dir" "${images[0]}"
+          codesign --verify --deep --strict --verbose=2 "$mount_dir/Forex Time.app"
       - name: Collect installer
         run: node scripts/release-artifacts.mjs collect ${{ matrix.target }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
