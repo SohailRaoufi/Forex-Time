@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- Documentation capture: run npm run dev and capture this page at 1920 × 1080.
+     The iframe renders the real app with its labeled browser sample data. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Forex Time — desktop preview</title>
+  <style>
+    @font-face { font-family: Manrope; src: url('/node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2'); font-weight: 200 800; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 1920px; height: 1080px; overflow: clip; }
+    body { position: fixed; inset: 0; font-family: Manrope, sans-serif; color: #ecf4f1; background: #08130f; }
+    .canvas { position: relative; height: 1080px; overflow: clip; background: radial-gradient(ellipse at 50% 52%, #234c3d 0, #122c24 38%, #0b1c17 65%, #08130f 100%); }
+    .orbit { position: absolute; width: 1800px; height: 1800px; border: 1px solid #94e1bc09; border-radius: 50%; left: 60px; top: -400px; box-shadow: 0 0 0 160px #94e1bc03, 0 0 0 320px #94e1bc02; }
+    .intro { position: absolute; top: 68px; left: 260px; right: 260px; display: flex; align-items: center; justify-content: space-between; }
+    .identity { display: flex; align-items: center; gap: 18px; font-size: 27px; letter-spacing: -1px; font-weight: 650; }
+    .identity img { width: 50px; }
+    .identity span { color: #92e4bf; }
+    .eyebrow { font-size: 13px; color: #8dac9e; letter-spacing: 2.5px; text-transform: uppercase; }
+    h1 { position: absolute; left: 260px; top: 119px; margin: 0; font-size: 39px; letter-spacing: -1.5px; font-weight: 550; }
+    .window { position: absolute; left: 260px; top: 218px; width: 1400px; border-radius: 18px; overflow: hidden; border: 1px solid #a6cdbb30; box-shadow: 0 48px 100px #0008, 0 10px 30px #0005; background: #0c1119; }
+    .chrome { height: 46px; background: linear-gradient(#212b31, #1a242a); border-bottom: 1px solid #35414a; display: flex; align-items: center; padding: 0 20px; gap: 9px; position: relative; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: #ff6059; box-shadow: inset 0 0 0 1px #0001; }
+    .dot:nth-child(2) { background: #ffbd2e; } .dot:nth-child(3) { background: #28c840; }
+    .window-title { position: absolute; left: 0; right: 0; text-align: center; font-size: 12px; color: #9eaeb9; }
+    .viewport { width: 1400px; height: 700px; overflow: hidden; }
+    iframe { width: 1273px; height: 636px; border: 0; display: block; transform: scale(1.1); transform-origin: 0 0; }
+    .foot { position: absolute; top: 987px; left: 260px; right: 260px; display: flex; justify-content: space-between; align-items: center; color: #9eb7ab; font-size: 16px; }
+    .features { display: flex; gap: 35px; }
+    .features span::before { content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #92e4bf; margin: 0 11px 3px 0; }
+    .caption { font-size: 12px; color: #6e8f80; }
+  </style>
+</head>
+<body>
+  <main class="canvas">
+    <div class="orbit"></div>
+    <div class="intro"><div class="identity"><img src="/src/assets/relay.svg" alt="Relay logo" /><div>forextime<span>.</span></div></div><div class="eyebrow">Your trading day, in focus</div></div>
+    <h1>Four sessions. One glance.</h1>
+    <section class="window" aria-label="Forex Time in a macOS-style presentation frame">
+      <div class="chrome"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="window-title">Forex Time</span></div>
+      <div class="viewport"><iframe src="/" title="Forex Time app preview"></iframe></div>
+    </section>
+    <div class="foot"><div class="features"><span>Automatic DST</span><span>All timezones</span><span>Pin it. Glance. Trade.</span></div><span class="caption">Interface preview · macOS-style presentation</span></div>
+  </main>
+  <script>
+    // Presentation-only styling. This file is not a production entry point.
+    document.querySelector('iframe').addEventListener('load', event => {
+      const style = document.createElement('style');
+      style.textContent = '.preview-banner { display: none; }';
+      event.target.contentDocument.head.append(style);
+    });
+  </script>
+</body>
+</html>

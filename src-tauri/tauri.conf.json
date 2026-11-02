@@ -14,11 +14,11 @@
       {
         "label": "main",
         "title": "Forex Time",
-        "width": 880,
-        "height": 880,
+        "width": 940,
+        "height": 600,
         "minWidth": 360,
-        "minHeight": 260,
-        "backgroundColor": "#0b1018",
+        "minHeight": 300,
+        "backgroundColor": "#0c1119",
         "decorations": false,
         "alwaysOnTop": false,
         "resizable": true,
@@ -30,7 +30,19 @@
     }
   },
   "bundle": {
-    "active": false,
-    "icon": ["icons/icon.ico", "icons/icon.png"]
+    "active": true,
+    "targets": ["nsis", "dmg"],
+    "publisher": "Sohail Raoufi",
+    "category": "Finance",
+    "shortDescription": "Four Forex sessions at a glance",
+    "longDescription": "A lightweight desktop clock for Sydney, Tokyo, London and New York, with automatic daylight saving adjustments, a session timeline and a compact floating view.",
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+    "windows": {
+      "nsis": { "installMode": "currentUser", "displayLanguageSelector": false }
+    },
+    "macOS": {
+      "minimumSystemVersion": "10.15",
+      "signingIdentity": "-"
+    }
   }
 }

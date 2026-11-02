@@ -5,3 +5,9 @@
 *.log
 *.tsbuildinfo
 /test-results/
+/artifacts/
+/release-artifacts/
+.env
+.env.*
+!.env.example
+.DS_Store

@@ -65,8 +65,8 @@ export function useWindowControls(native: boolean) {
           const monitor = await currentMonitor();
           const available = monitor?.workArea.size.toLogical(monitor.scaleFactor);
           await win.setSize(new LogicalSize(
-            Math.min(value ? 380 : 880, available ? available.width - 32 : 880),
-            Math.min(value ? 260 : 880, available ? available.height - 32 : 880),
+            Math.min(value ? 480 : 940, available ? available.width - 32 : 940),
+            Math.min(value ? 300 : 600, available ? available.height - 32 : 600),
           ));
           // Expanding near a screen edge must not put controls off-screen.
           await win.center();

@@ -1,37 +1,27 @@
 import type { MarketPayload } from './types';
 
-// Explicit static design fixtures. Never used in the native application.
+// Static design sample: Monday 2 Nov 2026, 14:00 UTC. Never used in Tauri.
 export const preview: MarketPayload = {
-  kabul_time: '18:42:08', london_time: '14:12:08', ny_time: '09:12:08',
-  london_status: true, ny_status: true, is_overlap: true,
-  kabul_date: 'Monday, 02 November 2026', timeline_date: 'Mon, 02 Nov', timeline_minute: 1122,
-  london_session: {
-    timezone_label: 'GMT', opens_at_kabul: '12:30', closes_at_kabul: '20:30',
-    timeline_start: 750, timeline_end: 1230, scheduled: true, progress_percent: 77,
-    next_change_seconds: 6472, next_change_at: 'Mon 20:30',
-  },
-  ny_session: {
-    timezone_label: 'EST', opens_at_kabul: '17:30', closes_at_kabul: '02:30',
-    timeline_start: 1050, timeline_end: 1590, scheduled: true, progress_percent: 13,
-    next_change_seconds: 28072, next_change_at: 'Tue 02:30',
-  },
-  next_event: { label: 'London closes', seconds: 6472, at_kabul: 'Mon 20:30' },
+  timestamp: 1793628000,
+  sessions: [
+    { id: 'sydney', name: 'Sydney', time: '01:00:00', date: 'Tue, 03 Nov', timezone: 'AEDT', is_open: false, hours: '08:00–17:00', next_change_seconds: 25200, next_change_local: 'Tue 08:00 AEDT', windows: [{ start: 25200, end: 57600 }] },
+    { id: 'tokyo', name: 'Tokyo', time: '23:00:00', date: 'Mon, 02 Nov', timezone: 'JST', is_open: false, hours: '09:00–18:00', next_change_seconds: 36000, next_change_local: 'Tue 09:00 JST', windows: [{ start: 36000, end: 68400 }] },
+    { id: 'london', name: 'London', time: '14:00:00', date: 'Mon, 02 Nov', timezone: 'GMT', is_open: true, hours: '08:00–16:00', next_change_seconds: 7200, next_change_local: 'Mon 16:00 GMT', windows: [{ start: 0, end: 7200 }, { start: 64800, end: 86400 }] },
+    { id: 'new-york', name: 'New York', time: '09:00:00', date: 'Mon, 02 Nov', timezone: 'EST', is_open: true, hours: '08:00–17:00', next_change_seconds: 28800, next_change_local: 'Mon 17:00 EST', windows: [{ start: 0, end: 28800 }, { start: 82800, end: 86400 }] },
+  ],
+  overlaps: [{ start: 0, end: 7200 }, { start: 25200, end: 28800 }, { start: 36000, end: 57600 }, { start: 64800, end: 68400 }, { start: 82800, end: 86400 }],
+  next_event: { label: 'London closes', seconds: 7200 },
+  compact: { current_id: 'new-york', next_id: 'sydney', next_open_seconds: 25200, next_open_local: 'Tue 08:00 AEDT' },
+  home: { id: 'Asia/Kabul', label: 'Kabul', utc_offset: 'UTC+04:30', next_event: { day: 'Mon', time: '20:30:00' }, next_open: { day: 'Tue', time: '01:30:00' } },
 };
 
-export function previewFor(mode: string): MarketPayload {
-  if (mode === 'solo') return {
-    ...preview, kabul_time: '14:30:00', london_time: '10:00:00', ny_time: '05:00:00',
-    ny_status: false, is_overlap: false, timeline_minute: 870,
-    london_session: { ...preview.london_session, progress_percent: 25, next_change_seconds: 21600 },
-    ny_session: { ...preview.ny_session, progress_percent: 0, next_change_seconds: 10800, next_change_at: 'Mon 17:30' },
-    next_event: { label: 'New York opens', seconds: 10800, at_kabul: 'Mon 17:30' },
+// Only the fixed browser design fixture uses Intl. Native conversions come from Rust.
+export function previewInTimezone(id: string): MarketPayload {
+  const formatter = new Intl.DateTimeFormat('en-US', { timeZone: id, weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+  const moment = (seconds: number) => {
+    const parts = Object.fromEntries(formatter.formatToParts(new Date((preview.timestamp + seconds) * 1000)).map(part => [part.type, part.value]));
+    return { day: parts.weekday, time: `${parts.hour}:${parts.minute}:${parts.second}` };
   };
-  if (mode === 'closed') return {
-    ...preview, kabul_time: '09:30:00', london_time: '05:00:00', ny_time: '00:00:00',
-    london_status: false, ny_status: false, is_overlap: false, timeline_minute: 570,
-    london_session: { ...preview.london_session, progress_percent: 0, next_change_seconds: 10800, next_change_at: 'Mon 12:30' },
-    ny_session: { ...preview.ny_session, progress_percent: 0, next_change_seconds: 28800, next_change_at: 'Mon 17:30' },
-    next_event: { label: 'London opens', seconds: 10800, at_kabul: 'Mon 12:30' },
-  };
-  return preview;
+  const offset = new Intl.DateTimeFormat('en-US', { timeZone: id, timeZoneName: 'longOffset' }).formatToParts(new Date(preview.timestamp * 1000)).find(part => part.type === 'timeZoneName')!.value;
+  return { ...preview, home: { id, label: id.split('/').at(-1)!.replaceAll('_', ' '), utc_offset: offset === 'GMT' ? 'UTC+00:00' : offset.replace('GMT', 'UTC'), next_event: moment(preview.next_event.seconds), next_open: moment(preview.compact.next_open_seconds) } };
 }

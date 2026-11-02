@@ -10,6 +10,9 @@
     "tauri": "tauri",
     "desktop": "tauri dev",
     "desktop:build": "tauri build --no-bundle",
+    "desktop:setup": "tauri build --bundles nsis -- --locked",
+    "desktop:dmg": "tauri build --bundles dmg -- --locked",
+    "icons": "node scripts/generate-icons.mjs",
     "test": "vitest run"
   },
   "dependencies": {

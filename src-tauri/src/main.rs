@@ -1,11 +1,13 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod market;
+mod preferences;
 
 use std::time::Duration;
 
 use chrono::Utc;
 use market::{MarketPayload, MarketTicker, MARKET_TICK_EVENT};
+use preferences::TimezonePreference;
 use tauri::{Emitter, Manager};
 use tokio::{task::JoinHandle, time::MissedTickBehavior};
 
@@ -19,8 +21,17 @@ impl Drop for ClockWorker {
 
 /// One-shot hydration after the frontend registers its event listener.
 #[tauri::command]
-fn get_market_snapshot() -> MarketPayload {
-    MarketPayload::at(Utc::now())
+fn get_market_snapshot(timezone: tauri::State<'_, TimezonePreference>) -> MarketPayload {
+    MarketPayload::at(Utc::now(), timezone.get())
+}
+
+#[tauri::command]
+fn set_home_timezone(
+    home_timezone: String,
+    timezone: tauri::State<'_, TimezonePreference>,
+) -> Result<MarketPayload, String> {
+    let zone = timezone.set(&home_timezone)?;
+    Ok(MarketPayload::at(Utc::now(), zone))
 }
 
 fn main() {
@@ -44,8 +55,14 @@ fn main() {
                 )
                 .build(),
         )
-        .invoke_handler(tauri::generate_handler![get_market_snapshot])
+        .invoke_handler(tauri::generate_handler![
+            get_market_snapshot,
+            set_home_timezone
+        ])
         .setup(move |app| {
+            app.manage(TimezonePreference::load(
+                app.path().app_config_dir()?.join("home-timezone.json"),
+            ));
             let handle = app.handle().clone();
             let _runtime_context = runtime_handle.enter();
             let worker = tokio::spawn(async move {
@@ -55,7 +72,9 @@ fn main() {
                 let mut ticker = MarketTicker::default();
                 loop {
                     interval.tick().await;
-                    if let Some(payload) = ticker.sample(Utc::now()) {
+                    if let Some(payload) =
+                        ticker.sample(Utc::now(), handle.state::<TimezonePreference>().get())
+                    {
                         if let Err(error) = handle.emit(MARKET_TICK_EVENT, payload) {
                             eprintln!("failed to emit {MARKET_TICK_EVENT}: {error}");
                         }
