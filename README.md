@@ -8,6 +8,7 @@
   <a href="https://github.com/SohailRaoufi/Forex-Time/releases/latest">Download for Windows & macOS</a>
   · <a href="#use">Features</a>
   · <a href="#run">Build from source</a>
+  · <a href="LICENSE">MIT License</a>
 </p>
 
 ![Forex Time — four session clocks and a shared timeline in a macOS-style frame](docs/images/desktop-preview.jpg)
@@ -176,3 +177,8 @@ the installers and `SHA256SUMS.txt` are published together. The workflow verifie
 Mac bundle signatures and DMG checksums. Existing published binaries are never
 silently overwritten. A manual workflow run on a branch builds artifacts without
 publishing a release.
+
+## License
+
+Forex Time is licensed under the [MIT License](LICENSE).
+Copyright © 2026 Sohail Raoufi.

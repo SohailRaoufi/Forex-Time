@@ -1,6 +1,7 @@
 [package]
 name = "forex-time"
 version = "0.1.0"
+license = "MIT"
 description = "DST-aware Forex session clocks with a selectable home timezone"
 edition = "2021"
 
