@@ -27,7 +27,7 @@ button:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px
 .icon-button.is-active { background: #203c31; border-color: #39604e; color: #9decc8; }
 .window-divider { width: 1px; height: 15px; background: #2b3646; margin: 0 6px; }
 .tooltip { z-index: 100; padding: 7px 10px; border-radius: 6px; background: #293343; color: #eef3fa; font-size: 12px; box-shadow: 0 4px 15px #0005; }
-.dashboard { padding: 18px 22px 14px; width: 100%; max-width: 1240px; margin: 0 auto; }
+.dashboard { padding: 18px 22px 8px; width: 100%; max-width: 1240px; margin: 0 auto; }
 .overview { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
 .overview h1 { font-family: var(--font-display); font-size: 18px; font-weight: 550; letter-spacing: -.4px; }
 .live-summary { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #93a3b9; white-space: nowrap; }
